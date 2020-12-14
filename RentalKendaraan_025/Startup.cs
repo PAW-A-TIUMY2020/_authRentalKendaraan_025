@@ -13,7 +13,7 @@ using RentalKendaraan_025.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RentalKendaraan_025.Models;
-
+using Microsoft.AspNetCore.Identity.UI.Services;
 namespace RentalKendaraan_025
 {
     public class Startup
@@ -39,8 +39,21 @@ namespace RentalKendaraan_025
             options.UseSqlServer(Configuration.GetConnectionString("Default")));
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+
             services.AddIdentity<IdentityUser, IdentityRole>().AddDefaultUI()
                 .AddEntityFrameworkStores<rental_kendaraanContext>().AddDefaultTokenProviders();
+
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("readonlypolicy",
+                builder => builder.RequireRole("Admin", "Manager", "Kasir"));
+                options.AddPolicy("writepolicy",
+              builder => builder.RequireRole("Admin", "Kasir"));
+                options.AddPolicy("editpolicy",
+              builder => builder.RequireRole("Admin", "Kasir"));
+                options.AddPolicy("deletepolicy",
+              builder => builder.RequireRole("Admin", "Kasir"));
+            });
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }

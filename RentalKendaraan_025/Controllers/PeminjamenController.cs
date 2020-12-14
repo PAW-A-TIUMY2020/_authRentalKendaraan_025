@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using RentalKendaraan_025.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace RentalKendaraan_025.Controllers
 {
@@ -17,9 +18,9 @@ namespace RentalKendaraan_025.Controllers
         {
             _context = context;
         }
-
+        [Authorize(Policy = "readonlypolicy")]
         // GET: Peminjamen
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string ktsd, string searchstring)
         {
             var rental_kendaraanContext = _context.Peminjaman.Include(p => p.IdCustomerNavigation).Include(p => p.IdJaminanNavigation).Include(p => p.IdKendaraanNavigation);
             return View(await rental_kendaraanContext.ToListAsync());
@@ -46,6 +47,7 @@ namespace RentalKendaraan_025.Controllers
             return View(peminjaman);
         }
 
+        [Authorize(Policy = "writepolicy")]
         // GET: Peminjamen/Create
         public IActionResult Create()
         {
@@ -74,6 +76,7 @@ namespace RentalKendaraan_025.Controllers
             return View(peminjaman);
         }
 
+        [Authorize(Policy = "editpolicy")]
         // GET: Peminjamen/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -131,6 +134,7 @@ namespace RentalKendaraan_025.Controllers
             return View(peminjaman);
         }
 
+        [Authorize(Policy ="deletepolicy")]
         // GET: Peminjamen/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
